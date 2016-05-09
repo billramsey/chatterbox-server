@@ -12,6 +12,10 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 
+
+var messages = [];
+
+
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
@@ -27,10 +31,55 @@ var requestHandler = function(request, response) {
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
-  console.log('Serving request type ' + request.method + ' for url ' + request.url);
+  
 
-  // The outgoing status.
+  var responseMessage = {};
+  responseMessage.results = [];
+
   var statusCode = 200;
+
+
+  
+
+  //console.log('messages');
+
+
+ // console.log(request);
+
+
+  if (request.method === 'OPTIONS') {
+
+  } else if (new RegExp('^/classes/messages.*').test(request.url)) { 
+
+    //console.log('Serving request type ' + request.method + ' for url ' + request.url);
+    if (request.method === 'GET') {
+      responseMessage.results = messages;
+    } else if (request.method === 'POST') {
+      statusCode = 201;
+
+      var reqData = '';  
+      request.on('data', function(data) {
+        //console.log('getting data', data);
+        reqData += data;
+      });
+      request.on('end', function () {
+    //    console.log('rdata' + reqData);
+        
+        var post = JSON.parse(reqData);
+        // var postRoom = post.room || '__undefined__';
+        // var roomPosts = messages[postRoom] || [];
+
+        messages.push(post);
+
+        //messages[postRoom] = roomPosts;
+  //      console.log('message data', messages);
+      });
+    }    
+  } else {
+    statusCode = 404;
+  }
+  
+
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
@@ -39,7 +88,7 @@ var requestHandler = function(request, response) {
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = 'text/plain';
+  headers['Content-Type'] = 'application/json';
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
@@ -52,7 +101,10 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end('Hello, World!');
+
+//  console.log('returning : code' + statusCode + ' : ' + JSON.stringify(responseMessage));
+
+  response.end(JSON.stringify(responseMessage));
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
@@ -67,7 +119,8 @@ var requestHandler = function(request, response) {
 var defaultCorsHeaders = {
   'access-control-allow-origin': '*',
   'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'access-control-allow-headers': 'content-type, accept',
+  'access-control-allow-headers': 'content-type, accept, X-Parse-Application-Id, X-Parse-REST-API-Key',
   'access-control-max-age': 10 // Seconds.
 };
 
+module.exports.requestHandler = requestHandler;
