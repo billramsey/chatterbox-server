@@ -126,8 +126,8 @@
 
 
   $( document ).ready(function() {
-    //setInterval(app.fetch, 1000);
-    //setInterval(app.fetchRoomList, 10000);
+    setInterval(app.fetch, 4000);
+    setInterval(app.fetchRoomList, 12000);
     app.init();
     app.fetchRoomList();
     app.fetch();
