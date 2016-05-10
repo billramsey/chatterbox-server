@@ -12,6 +12,9 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 
+const fs = require('fs');
+
+
 var messages = [];
 var messageCountId = 0;
   
@@ -42,75 +45,58 @@ var requestHandler = function(request, response) {
 
   
 
-  //console.log('messages');
-
-
- // console.log(request);
-
 
   if (request.method === 'OPTIONS') {
-
+    sendPage('application/json', 200, '');
   } else if (new RegExp('^/classes/messages.*').test(request.url)) { 
 
     //console.log('Serving request type ' + request.method + ' for url ' + request.url);
     if (request.method === 'GET') {
-      //console.log('getting messages', messages);
-      responseMessage.results = messages;
-
+      sendPage(response, 'application/json', 200, JSON.stringify({results: messages}));
     } else if (request.method === 'POST') {
-      statusCode = 201;
 
       var reqData = '';  
       request.on('data', function(data) {
-        //console.log('getting data', data);
         reqData += data;
       });
       request.on('end', function () {
-    //    console.log('rdata' + reqData);
-        
+
         var post = JSON.parse(reqData);
         post.objectId = messageCountId++;
-        // var postRoom = post.room || '__undefined__';
-        // var roomPosts = messages[postRoom] || [];
-        //console.log('pushing:', post);
+
         messages.push(post);
 
-        //messages[postRoom] = roomPosts;
-  //      console.log('message data', messages);
+        sendPage(response, 'application/json', 201, '');
+
       });
     }    
+  } else if (new RegExp('^/client.*').test(request.url)) {
+    var process = require('process');
+    process.chdir('../client/client');
+
+    fs.readFile('index.html', 'utf8', function (err, data) {
+      if (err) {
+        return console.log(err);
+      }
+      sendPage(response, 'text/html', 200, data);
+    });
+
+
+
   } else {
-    statusCode = 404;
+    sendPage(response, 'application/json', 404, '');
   }
-  
-
-
-  // See the note below about CORS headers.
-  var headers = defaultCorsHeaders;
-
-  // Tell the client we are sending them plain text.
-  //
-  // You will need to change this if you are sending something
-  // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = 'application/json';
-
-  // .writeHead() writes to the request line and headers of the response,
-  // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
-
-  // Make sure to always call response.end() - Node may not send
-  // anything back to the client until you do. The string you pass to
-  // response.end() will be the body of the response - i.e. what shows
-  // up in the browser.
-  //
-  // Calling .end "flushes" the response's internal buffer, forcing
-  // node to actually send all the data over to the client.
-
-  // console.log('returning : code' + statusCode + ' : ' + JSON.stringify(responseMessage));
-
-  response.end(JSON.stringify(responseMessage));
 
 };
+//JSON.stringify(responseMessage)
+
+var sendPage = function(response, contentType, statusCode, text) {
+  var headers = defaultCorsHeaders;
+  headers['Content-Type'] = contentType;
+  response.writeHead(statusCode, headers);
+  response.end(text);
+};
+
 // These headers will allow Cross-Origin Resource Sharing (CORS).
 // This code allows this server to talk to websites that
 // are on different domains, for instance, your chat client.
