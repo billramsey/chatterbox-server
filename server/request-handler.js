@@ -12,11 +12,13 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 
-
 var messages = [];
-
-
+var messageCountId = 0;
+  
 var requestHandler = function(request, response) {
+
+
+
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -33,8 +35,7 @@ var requestHandler = function(request, response) {
   // console.logs in your code.
   
 
-  var responseMessage = {};
-  responseMessage.results = [];
+  var responseMessage = {results: []};
 
   var statusCode = 200;
 
@@ -53,7 +54,9 @@ var requestHandler = function(request, response) {
 
     //console.log('Serving request type ' + request.method + ' for url ' + request.url);
     if (request.method === 'GET') {
+      //console.log('getting messages', messages);
       responseMessage.results = messages;
+
     } else if (request.method === 'POST') {
       statusCode = 201;
 
@@ -66,9 +69,10 @@ var requestHandler = function(request, response) {
     //    console.log('rdata' + reqData);
         
         var post = JSON.parse(reqData);
+        post.objectId = messageCountId++;
         // var postRoom = post.room || '__undefined__';
         // var roomPosts = messages[postRoom] || [];
-
+        //console.log('pushing:', post);
         messages.push(post);
 
         //messages[postRoom] = roomPosts;
@@ -102,11 +106,11 @@ var requestHandler = function(request, response) {
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
 
-//  console.log('returning : code' + statusCode + ' : ' + JSON.stringify(responseMessage));
+  // console.log('returning : code' + statusCode + ' : ' + JSON.stringify(responseMessage));
 
   response.end(JSON.stringify(responseMessage));
-};
 
+};
 // These headers will allow Cross-Origin Resource Sharing (CORS).
 // This code allows this server to talk to websites that
 // are on different domains, for instance, your chat client.
