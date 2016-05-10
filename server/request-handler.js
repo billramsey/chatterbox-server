@@ -42,10 +42,6 @@ var requestHandler = function(request, response) {
 
   var statusCode = 200;
 
-
-  
-
-
   if (request.method === 'OPTIONS') {
     sendPage('application/json', 200, '');
   } else if (new RegExp('^/classes/messages.*').test(request.url)) { 

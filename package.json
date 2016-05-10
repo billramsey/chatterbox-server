@@ -29,5 +29,9 @@
     "presets": [
       "es2015"
     ]
+  },
+  "dependencies": {
+    "cors": "^2.7.1",
+    "express": "^4.13.4"
   }
 }
