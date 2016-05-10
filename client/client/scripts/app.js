@@ -23,11 +23,13 @@
           setTimeout( function() {
             $('.spinner').hide();
           }, 500);
+          app.fetch();
         },
         error: function(errMessage) {
         },
         dataType: 'json'
       });
+
     },
     fetch: function() {
       var query = {'where': {'roomname': app.currentRoom}};
@@ -36,7 +38,7 @@
         url: app.server,
         data: query,
         success: function(data) {
-          //console.log(data);
+          console.log(data);
           //reversed to show up in reverse chron order
           _.forEach(data.results, function(obj) {
             //console.log(obj, app.chatLog[obj.objectId]);
@@ -128,6 +130,7 @@
     //setInterval(app.fetchRoomList, 10000);
     app.init();
     app.fetchRoomList();
+    app.fetch();
     //Send Message
     $( '#send' ).on('submit', function(event) {
       app.handleSubmit($('#message').val());
