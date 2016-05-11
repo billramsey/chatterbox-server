@@ -51,6 +51,6 @@
   .options(function(req, res) {
     res.status(200).send();
   });
-
-  app.listen(3000, function() {
+  app.set('port', (process.env.PORT || 5000));
+  app.listen(app.get('port), function() {
   });
