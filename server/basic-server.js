@@ -1,19 +1,3 @@
-
-var cluster = require('cluster');
-
-// Code to run if we're in the master process
-if (cluster.isMaster) {
-
-  // Count the machine's CPUs
-  var cpuCount = require('os').cpus().length;
-
-  // Create a worker for each CPU
-  for (var i = 0; i < cpuCount; i += 1) {
-    cluster.fork();
-  }
-
-} else {
-
   var express = require('express');
   var fs = require('fs');
 
@@ -70,5 +54,3 @@ if (cluster.isMaster) {
 
   app.listen(3000, function() {
   });
-
-}
