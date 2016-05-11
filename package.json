@@ -13,7 +13,8 @@
     "start:es6": "babel-node server/basic-server.js",
     "test": "mocha server/spec",
     "test:es6": "mocha --compilers js:babel-register server/spec",
-    "lint": "eslint ./"
+    "lint": "eslint ./",
+    "postinstall": "./node_modules/bower/bin/bower install"
   },
   "devDependencies": {
     "babel-cli": "^6.7.5",
@@ -31,6 +32,7 @@
   },
   "dependencies": {
     "cors": "^2.7.1",
-    "express": "^4.13.4"
+    "express": "^4.13.4",
+    "bower": "^1.3.12"
   }
 }
