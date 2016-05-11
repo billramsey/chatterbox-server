@@ -17,7 +17,7 @@
   //console.log('dirname', __dirname);
   app.use('/static', express.static(__dirname + '/../client/')); //__dirname + 
 
-
+  //route through here
   app.route('/classes/messages')
   .all(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
