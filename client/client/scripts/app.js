@@ -3,7 +3,7 @@
 //Optional, better handle loading new entries instead of wipe/clear
 
   var app = {
-    server: 'http://127.0.0.1:3000/classes/messages',
+    server: 'https://127.0.0.1:3000/classes/messages',
     currentRoom: ' ',
     friends: [],
     rooms: [],
